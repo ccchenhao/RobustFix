@@ -32,6 +32,7 @@ class ReadAnnotation {
                 try {
                     boolean isNewlyAddClass = scanClassForAddClassAnnotation(ctclass);
                     //newly add class donnot need scann for modify
+                    //类是新加的，就没必要扫描类中每个方法
                     if (!isNewlyAddClass) {
                         patchMethodSignureSet.addAll(scanClassForModifyMethod(ctclass));
                         scanClassForAddMethodAnnotation(ctclass);
@@ -97,7 +98,7 @@ class ReadAnnotation {
 
                         if (Constants.LAMBDA_MODIFY.equals(m.method.declaringClass.name)) {
                             isAllMethodsPatch = false;
-                            addPatchMethodAndModifiedClass(patchMethodSignureSet, method);
+                            ReadAnnotation.addPatchMethodAndModifiedClass(patchMethodSignureSet, method);
                         }
                     } catch (javassist.NotFoundException e) {
                         e.printStackTrace()
@@ -128,6 +129,7 @@ class ReadAnnotation {
     }
 
     public static Set addPatchMethodAndModifiedClass(Set patchMethodSignureSet, CtMethod method) {
+        //Modify的方法肯定之前就存在于methodsMap.robust
         if (Config.methodMap.get(method.longName) == null) {
             print("addPatchMethodAndModifiedClass pint methodmap ");
             JavaUtils.printMap(Config.methodMap);
@@ -137,6 +139,7 @@ class ReadAnnotation {
         Modify classModifyAnootation = method.declaringClass.getAnnotation(Constants.ModifyAnnotationClass) as Modify;
         if ((methodModifyAnootation == null || methodModifyAnootation.value().length() < 1)) {
             //no annotation value
+            //处理RobustModify.modify()
             patchMethodSignureSet.add(method.longName);
             if (!Config.modifiedClassNameList.contains(method.declaringClass.name))
                 Config.modifiedClassNameList.add(method.declaringClass.name);

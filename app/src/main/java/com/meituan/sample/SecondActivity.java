@@ -10,10 +10,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//import com.meituan.robust.patch.RobustModify;
+//import com.meituan.robust.patch.annotaion.Add;
+//import com.meituan.robust.patch.annotaion.Modify;
+
+import com.meituan.robust.patch.RobustModify;
 import com.meituan.robust.patch.annotaion.Add;
 import com.meituan.robust.patch.annotaion.Modify;
 
@@ -21,41 +27,50 @@ import java.lang.reflect.Field;
 
 public class SecondActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static int test2 = 2;
     protected static String name = "SecondActivity";
     private ListView listView;
     private String[] multiArr = {"列表1", "列表2", "列表3", "列表4"};
+
+    @Modify
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
         listView = (ListView) findViewById(R.id.listview);
         TextView textView = (TextView) findViewById(R.id.secondtext);
-        textView.setOnClickListener(v -> {
-//                    RobustModify.modify();
-                    Log.d("robust", " onclick  in Listener");
-                }
-        );
-        //change text on the  SecondActivity
+        Button button = (Button) findViewById(R.id.button2);
+//        //change text on the  SecondActivity
+//        button.setOnClickListener(new BtnClickListener());
         textView.setText(getTextInfo());
-
-        //test array
-        BaseAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, multiArr);
-        listView.setAdapter(adapter);
-        printLog("robust", new String[][]{new String[]{"1", "2", "3"}, new String[]{"4", "5", "6"}});
     }
 
-//    @Modify
-    public String getTextInfo() {
-        getArray();
-        return "error occur " ;
-//        return "error fixed";
+    //    @Modify
+    private String getTextInfo() {
+//        RobustModify.modify();
+//        return getArray1()[0] ;
+        Log.d("chlog", "444");
+//        String dsf=other(4);
+//        String sdf=MainActivity.mainStatic();
+        return "222";
     }
 
-    @Add
+    public static void tsetRunnable(String info, Runnable runnable) {
+        Log.d("chlog", "runnable=" + info);
+        runnable.run();
+    }
+
+
+    //    @Add
     public String[] getArray() {
-       return new String[]{"hello","world"};
+        return new String[]{"hello", "world"};
     }
+
+    //    @Add
+    public String[] getArray1() {
+        return new String[]{"hello1", "world1"};
+    }
+
 
     @Override
     public View onCreateView(String name, Context context, AttributeSet attrs) {

@@ -1,17 +1,63 @@
 apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+//apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
 compileGroovy {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
-    compile 'com.android.tools.build:gradle:2.1.0'
-    compile 'org.javassist:javassist:3.20.0-GA'
-    compile fileTree(dir: "./src/main/libs", include: ['*.jar'])
-    compile project(':autopatchbase')
+    implementation gradleApi()
+    implementation localGroovy()
+//    compile 'com.android.tools.build:gradle:4.1.1'
+    implementation "com.android.tools.build:gradle:3.6.4"
+    implementation 'org.javassist:javassist:3.28.0-GA'
+    implementation fileTree(dir: "./src/main/libs", include: ['*.jar'])
+//    compile project(':autopatchbase')
 //    compile 'com.meituan.robust:autopatchbase:0.4.93'
-    compile 'org.ow2.asm:asm:5.0.1'
+    implementation 'test.com.meituan.robust:autopatchbase:1.0.0'
+    implementation 'org.ow2.asm:asm:5.0.1'
+}
+//这里因为要获取module的本地依赖，所以引入本地仓库
+repositories {
+    maven{
+        //../回到根目录
+        url uri('../repo')
+    }
+    google()
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+
 }
 
-apply from: '../gradle_mvn_push.gradle'
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'test.com.meituan.robust'
+            artifactId = 'gradle-plugin'
+            version = '1.0.0'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = uri('../repo')
+        }
+    }
+}
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            //指定 maven 发布三剑客
+//            pom.groupId = 'test.com.meituan.robust'
+//            pom.artifactId = 'gradle-plugin'
+//            pom.version = '1.0.0'
+//            //指定本地 maven 仓库的路径，这里我指定的就是当前 Module 目录下
+//            repository(url: uri('../repo'))
+//        }
+//    }
+//}
+//apply from: '../gradle_mvn_push.gradle'

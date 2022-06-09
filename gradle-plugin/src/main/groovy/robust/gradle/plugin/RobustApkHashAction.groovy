@@ -39,8 +39,11 @@ class RobustApkHashAction implements Action<Project> {
                             resourceFiles = packageTask.resourceFiles.get()
                             partFiles.add(resourceFiles.getFiles())
                         } catch (Exception e){
-                            //gradle 5.4+ & gradle tools 3.5.0+ 适配
-                            Object resFiles = packageTask.resourceFiles
+//                            //gradle 5.4+ & gradle tools 3.5.0+ 适配
+//                            Object resFiles = packageTask.resourceFiles
+                            //gradle 7.1.2 & gradle tools 7.1.2 适配
+                            def resFiles1 = packageTask.getResourceFiles()
+                            def resFiles=resFiles1.getAsFileTree().getFiles()
                             for (File file : resFiles){
                                 partFiles.add(file)
                             }

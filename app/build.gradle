@@ -1,15 +1,22 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
-//apply plugin: 'auto-patch-plugin'
+apply plugin: 'kotlin-android'
+apply plugin: 'auto-patch-plugin'
 apply plugin: 'robust'
 
+gradle.taskGraph.whenReady {
+    it.allTasks.each { task ->
+        //打印的class name带Decorated,所以这里减去
+        println "找到${task.name}=>${task.class.name - '_Decorated'}"
+    }
+}
+//找到packageRelease=>com.android.build.gradle.tasks.PackageApplication
+//Could not get unknown property 'resourceFile' for task ':app:packageRelease' of type com.android.build.gradle.tasks.PackageApplication.
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.meituan.robust.sample"
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion 21
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
@@ -26,6 +33,8 @@ android {
             storePassword "robust"
             keyAlias "robust"
             keyPassword "robust"
+            v1SigningEnabled=true
+            v2SigningEnabled = true
         }
     }
     buildTypes {
@@ -34,10 +43,12 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.meituan
+//            v1SigningEnabled = true
+//            v2SigningEnabled = true
         }
         debug {
-            minifyEnabled true
-//            minifyEnabled false
+//            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,12 +59,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
 
     }
-    packagingOptions {
-        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
-        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
-        exclude 'META-INF/maven/commons-cli/commons-cli/pom.properties'
-        exclude 'META-INF/maven/commons-cli/commons-cli/pom.xml'
-    }
+//    packagingOptions {
+//        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+//        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+//        exclude 'META-INF/maven/commons-cli/commons-cli/pom.properties'
+//        exclude 'META-INF/maven/commons-cli/commons-cli/pom.xml'
+//    }
 }
 configurations {
     all*.exclude group: 'com.google.guava', module: 'guava'
@@ -62,14 +73,23 @@ configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 dependencies {
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
-    compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.android.support:design:25.4.0'
-    compile 'org.javassist:javassist:3.20.0-GA'
-    compile project(path: ':patch')
+    api 'com.google.code.gson:gson:2.7'
+    api 'com.squareup.picasso:picasso:2.5.2'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    api 'com.android.support:appcompat-v7:25.3.1'
+    api 'com.squareup.okhttp:okhttp:2.5.0'
+    api 'com.google.code.gson:gson:2.3.1'
+    api 'com.android.support:design:25.4.0'
+    api 'org.javassist:javassist:3.28.0-GA'
+    api project(path: ':patch')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+//    compileOnly 'com.meituan.robust:gradle-plugin:0.4.96'
+//    compileOnly 'com.android.tools.build:gradle:7.1.2'
+//    api 'test.com.meituan.robust:autopatchbase:1.0.0'
+
+
+}
+repositories {
+    mavenCentral()
 }

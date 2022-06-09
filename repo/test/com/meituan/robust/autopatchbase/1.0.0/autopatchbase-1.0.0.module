@@ -1,0 +1,60 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "test.com.meituan.robust",
+    "module": "autopatchbase",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "autopatchbase-1.0.0.jar",
+          "url": "autopatchbase-1.0.0.jar",
+          "size": 10829,
+          "sha512": "86930ba122cc2cc86853dcfc8ddc84aa7280e8262a51f76bd3c4d10bf9219fa3b2c28751f2c5f0c469d4f6ac1273a647c67184711ac8364adf3c94dbcfa3d845",
+          "sha256": "7333c7b426cd9a47b0e5c02a0ab3ba9dd459eff12580b98249edee8370bc9a9a",
+          "sha1": "a82196fc82bf7a9da7a57df402c001aeb11cb8d3",
+          "md5": "44de8a62948e6cfd6feed648b8760671"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "autopatchbase-1.0.0.jar",
+          "url": "autopatchbase-1.0.0.jar",
+          "size": 10829,
+          "sha512": "86930ba122cc2cc86853dcfc8ddc84aa7280e8262a51f76bd3c4d10bf9219fa3b2c28751f2c5f0c469d4f6ac1273a647c67184711ac8364adf3c94dbcfa3d845",
+          "sha256": "7333c7b426cd9a47b0e5c02a0ab3ba9dd459eff12580b98249edee8370bc9a9a",
+          "sha1": "a82196fc82bf7a9da7a57df402c001aeb11cb8d3",
+          "md5": "44de8a62948e6cfd6feed648b8760671"
+        }
+      ]
+    }
+  ]
+}

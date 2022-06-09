@@ -34,7 +34,9 @@ Robust is an Android HotFix solution with high compatibility and high stability.
 	```java
 	 buildscript {
 	    repositories {
-	        jcenter()
+	                maven { url 'https://maven.aliyun.com/repository/public' }
+                    maven { url 'https://maven.aliyun.com/repository/google' }
+                    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 	    }
 	    dependencies {
 	         classpath 'com.meituan.robust:gradle-plugin:0.4.99'

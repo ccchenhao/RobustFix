@@ -9,6 +9,7 @@ import com.meituan.robust.utils.SmaliTool
 import javassist.CannotCompileException
 import javassist.CtClass
 import javassist.CtMethod
+import javassist.bytecode.ClassFile
 import javassist.expr.ExprEditor
 import javassist.expr.MethodCall
 import org.gradle.api.Plugin
@@ -52,11 +53,15 @@ class AutoPatchTransform extends Transform implements Plugin<Project> {
         ROBUST_DIR = "${project.projectDir}${File.separator}robust${File.separator}"
         def baksmaliFilePath = "${ROBUST_DIR}${Constants.LIB_NAME_ARRAY[0]}"
         def smaliFilePath = "${ROBUST_DIR}${Constants.LIB_NAME_ARRAY[1]}"
-        def dxFilePath = "${ROBUST_DIR}${Constants.LIB_NAME_ARRAY[2]}"
+        def dxFilePath = "${ROBUST_DIR}d8.jar";
+//        def dxFilePath = "${ROBUST_DIR}${Constants.LIB_NAME_ARRAY[2]}"
         Config.robustGenerateDirectory = "${project.buildDir}" + File.separator + "$Constants.ROBUST_GENERATE_DIRECTORY" + File.separator;
         dex2SmaliCommand = "  java -jar ${baksmaliFilePath} -o classout" + File.separator + "  $Constants.CLASSES_DEX_NAME";
-        smali2DexCommand = "   java -jar ${smaliFilePath} classout" + File.separator + " -o "+Constants.PATACH_DEX_NAME;
+        smali2DexCommand = "   java -jar ${smaliFilePath} classout" + File.separator + " -o " + Constants.PATACH_DEX_NAME;
         jar2DexCommand = "   java -jar ${dxFilePath} --dex --output=$Constants.CLASSES_DEX_NAME  " + Constants.ZIP_FILE_NAME;
+        def outputPath = "${project.buildDir}" + File.separator + "$Constants.ROBUST_GENERATE_DIRECTORY"
+//        jar2DexCommand = "   java -jar ${dxFilePath} --output " + outputPath + " " + Config.robustGenerateDirectory + Constants.ZIP_FILE_NAME
+        jar2DexCommand = "  java -jar ${dxFilePath} --debug --lib ${ROBUST_DIR}android.jar --intermediate --output " + outputPath + " " + Config.robustGenerateDirectory + Constants.ZIP_FILE_NAME + " --classpath ${ROBUST_DIR}javac";
         ReadXML.readXMl(project.projectDir.path);
         Config.methodMap = JavaUtils.getMapFromZippedFile(project.projectDir.path + Constants.METHOD_MAP_PATH)
     }
@@ -185,6 +190,13 @@ class AutoPatchTransform extends Transform implements Plugin<Project> {
             InlineClassFactory.dealInLineClass(patchPath, Config.newlyAddedClassNameList)
             initSuperMethodInClass(Config.modifiedClassNameList);
             //auto generate all class
+            //这里先生成patch类的所有空类，避免单个遍历时访问某个patch类可能找不到还没生成的patch类
+            for (String fullClassName : Config.modifiedClassNameList) {
+                CtClass ctClass = Config.classPool.get(fullClassName)
+                CtClass patchClass = Config.classPool.makeClass(NameManger.getInstance().getPatchName(ctClass.name));
+                patchClass.getClassFile().setMajorVersion(ClassFile.JAVA_8);
+                patchClass.writeFile(patchPath);
+            }
             for (String fullClassName : Config.modifiedClassNameList) {
                 CtClass ctClass = Config.classPool.get(fullClassName)
                 CtClass patchClass = PatchesFactory.createPatch(patchPath, ctClass, false, NameManger.getInstance().getPatchName(ctClass.name), Config.patchMethodSignatureSet)
@@ -234,9 +246,13 @@ class AutoPatchTransform extends Transform implements Plugin<Project> {
     def executeCommand(String commond) {
         Process output = commond.execute(null, new File(Config.robustGenerateDirectory))
         output.inputStream.eachLine { println commond + " inputStream output   " + it }
+        def hasError = false;
         output.errorStream.eachLine {
+            hasError = true
             println commond + " errorStream output   " + it;
-            throw new RuntimeException("execute command " + commond + " error");
+        }
+        if (hasError) {
+//            throw new RuntimeException("execute command " + commond + " error");
         }
     }
 

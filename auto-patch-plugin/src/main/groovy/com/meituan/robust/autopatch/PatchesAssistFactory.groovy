@@ -11,7 +11,7 @@ class PatchesAssistFactory {
         CtClass assistClass = Config.classPool.getOrNull(NameManger.getInstance().getAssistClassName(patchClassName))
         if (assistClass == null) {
             assistClass = Config.classPool.makeClass(NameManger.getInstance().getAssistClassName(patchClassName))
-            assistClass.getClassFile().setMajorVersion(ClassFile.JAVA_7);
+            assistClass.getClassFile().setMajorVersion(ClassFile.JAVA_8);
             if (modifiedClass.getSuperclass() != null)
                 assistClass.setSuperclass(modifiedClass.getSuperclass())
         }

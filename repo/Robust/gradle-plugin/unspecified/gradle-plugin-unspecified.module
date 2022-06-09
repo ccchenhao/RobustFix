@@ -1,0 +1,90 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "Robust",
+    "module": "gradle-plugin",
+    "version": "unspecified",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "gradle-plugin-unspecified.jar",
+          "url": "gradle-plugin-unspecified.jar",
+          "size": 63921,
+          "sha512": "b5a86b87eaf27af0b3e53d3f9dc5a7dac2a662c6c00e38f3a2c14c127165c8785d23e7aef7d99a15120cfe9b7afaa1ef33526de2ac48ec26ac567ef32b38494a",
+          "sha256": "a4b599d23b0d28e95228d874732285abeba6282d9e7178faf2a3e7dd0b0d1d79",
+          "sha1": "3927283956d3c84760777cbd92f763a759e95391",
+          "md5": "6da3a41ef75774609e1015c521075e25"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 11,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "3.6.4"
+          }
+        },
+        {
+          "group": "org.javassist",
+          "module": "javassist",
+          "version": {
+            "requires": "3.28.0-GA"
+          }
+        },
+        {
+          "group": "test.com.meituan.robust",
+          "module": "autopatchbase",
+          "version": {
+            "requires": "1.0.0"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm",
+          "version": {
+            "requires": "5.0.1"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "gradle-plugin-unspecified.jar",
+          "url": "gradle-plugin-unspecified.jar",
+          "size": 63921,
+          "sha512": "b5a86b87eaf27af0b3e53d3f9dc5a7dac2a662c6c00e38f3a2c14c127165c8785d23e7aef7d99a15120cfe9b7afaa1ef33526de2ac48ec26ac567ef32b38494a",
+          "sha256": "a4b599d23b0d28e95228d874732285abeba6282d9e7178faf2a3e7dd0b0d1d79",
+          "sha1": "3927283956d3c84760777cbd92f763a759e95391",
+          "md5": "6da3a41ef75774609e1015c521075e25"
+        }
+      ]
+    }
+  ]
+}

@@ -20,4 +20,13 @@
         android:id="@+id/secondtext"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="button2"
+        android:id="@+id/button2"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/secondtext"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

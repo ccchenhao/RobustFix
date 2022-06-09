@@ -50,6 +50,7 @@ public class JavaAssistInsertImpl extends InsertcodeStrategy {
                 if (ctClass.isInterface() || ctClass.getDeclaredMethods().length < 1) {
                     //skip the unsatisfied class
                     zipFile(ctClass.toBytecode(), outStream, ctClass.getName().replaceAll("\\.", "/") + ".class");
+                    ctClass.defrost();
                     continue;
                 }
 
@@ -98,6 +99,7 @@ public class JavaAssistInsertImpl extends InsertcodeStrategy {
             }
             //zip the inserted-classes into output file
             zipFile(ctClass.toBytecode(), outStream, ctClass.getName().replaceAll("\\.", "/") + ".class");
+            ctClass.defrost();
         }
 //        }.get()
         outStream.close();

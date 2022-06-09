@@ -32,7 +32,9 @@ class ReflectUtils {
                 FileUtils.listFiles(it.file, null, true).each {
                     if (it.absolutePath.endsWith(SdkConstants.DOT_CLASS)) {
                         def className = it.absolutePath.substring(dirPath.length() + 1, it.absolutePath.length() - SdkConstants.DOT_CLASS.length()).replaceAll(Matcher.quoteReplacement(File.separator), '.')
-                        classNames.add(className)
+                        if (!"META-INF.versions.9.module-info".equals(className)) {
+                            classNames.add(className)
+                        }
                     }
                 }
             }
@@ -45,7 +47,9 @@ class ReflectUtils {
                     String className = libClass.getName();
                     if (className.endsWith(SdkConstants.DOT_CLASS)) {
                         className = className.substring(0, className.length() - SdkConstants.DOT_CLASS.length()).replaceAll('/', '.')
-                        classNames.add(className)
+                        if (!"META-INF.versions.9.module-info".equals(className)) {
+                            classNames.add(className)
+                        }
                     }
                 }
             }
@@ -74,6 +78,7 @@ class ReflectUtils {
             if (AccessFlag.isPublic(field.modifiers)) {
                 stringBuilder.append("\$_ = \$proceed(\$\$);");
             } else {
+                println "modifiedClassName=" + modifiedClassName + " field.declaringClass.name=" + field.declaringClass.name + " patchClassName=" + patchClassName
                 if (field.declaringClass.name.equals(patchClassName)) {
                     stringBuilder.append(Constants.ROBUST_UTILS_FULL_NAME + ".setStaticFieldValue(\"" + getMappingValue(field.name, memberMappingInfo) + "\"," + modifiedClassName + ".class,\$1);");
                 } else {
@@ -208,6 +213,13 @@ class ReflectUtils {
         return signureBuilder.toString();
     }
 
+    def static String instanceReplaceThis() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\$args=" + Constants.GET_REAL_PARAMETER + "(\$args);");
+        stringBuilder.append("\$_=(\$r)\$proceed(\$\$);");
+        return stringBuilder.toString();
+    }
+
     def
     static String getCreateClassString(NewExpr e, String className, String patchClassName, boolean isStatic) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -304,49 +316,63 @@ class ReflectUtils {
         //这里面需要注意在static method中 使用static method和非static method 和在非static method中 使用static method和非static method的四种情况
 //            stringBuilder.append("java.lang.Object instance;");
         stringBuilder.append(methodCall.method.declaringClass.name + " instance;");
+        String callMethodClassName = methodCall.method.declaringClass.name;
+        if (isAddMethod(methodCall)) {
+            //找到这个方法的调用者类对应的patch类中,而不是当前patch类(patchClass)
+            callMethodClassName = Config.patchPackageName + "." + methodCall.method.declaringClass.simpleName + Constants.PATCH_SUFFIX;
+        }
+        //methodCall当前方法
         if (isStatic(methodCall.method.modifiers)) {
+            //静态方法中调用静态add方法
             if (isInStaticMethod) {
                 //在static method使用static method
                 if (AccessFlag.isPublic(methodCall.method.modifiers)) {
                     stringBuilder.append("\$_ = \$proceed(\$\$);");
                 } else {
                     if (signatureBuilder.toString().length() > 1) {
-                        stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + methodCall.method.declaringClass.name + ".class,\$args,new Class[]{" + signatureBuilder.toString() + "});");
-                    } else
-                        stringBuilder.append("\$_=(\$r)" + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + methodCall.method.declaringClass.name + ".class,\$args,null);");
+                        stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + callMethodClassName + ".class,\$args,new Class[]{" + signatureBuilder.toString() + "});");
+                    } else {
+                        stringBuilder.append("\$_=(\$r)" + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + callMethodClassName + ".class,\$args,null);");
+                    }
                 }
                 if (Constants.isLogging) {
                     stringBuilder.append("  android.util.Log.d(\"robust\",\"invoke static  method is      ${getCoutNumber()}  \" +\"" + methodCall.methodName + "\");");
                 }
             } else {
-                //在非static method中使用static method
+                //非静态方法中调用静态方法，
                 stringBuilder.append("java.lang.Object parameters[]=" + Constants.GET_REAL_PARAMETER + "(\$args);");
                 if (signatureBuilder.toString().length() > 1) {
-                    stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + methodCall.method.declaringClass.name + ".class,parameters,new Class[]{" + signatureBuilder.toString() + "});");
-                } else
-                    stringBuilder.append("\$_=(\$r)" + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + methodCall.method.declaringClass.name + ".class,parameters,null);");
+                    stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + callMethodClassName + ".class,parameters,new Class[]{" + signatureBuilder.toString() + "});");
+                } else {
+                    stringBuilder.append("\$_=(\$r)" + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectStaticMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\"," + callMethodClassName + ".class,parameters,null);");
+                }
             }
 
         } else {
-
+            //非静态方法中调用非静态目标方法
             if (!isInStaticMethod) {
-                //在非static method中使用非static method
-                stringBuilder.append(" if(\$0 == this ){");
-                stringBuilder.append("instance=((" + patchClass.getName() + ")\$0)." + Constants.ORIGINCLASS + ";")
-                stringBuilder.append("}else{");
+                //判断是不是原来类方法
+                stringBuilder.append(" if(\$0 != this || " + isAddMethod(methodCall) + "){");
                 stringBuilder.append("instance=\$0;");
+                stringBuilder.append("}else{");
+                stringBuilder.append("instance=((" + patchClass.getName() + ")\$0)." + Constants.ORIGINCLASS + ";")
                 stringBuilder.append("}");
+                //在非static method中使用非static method
+                //说明有参数，无参else中填null
                 if (signatureBuilder.toString().length() > 1) {
                     stringBuilder.append("java.lang.Object parameters[]=" + Constants.GET_REAL_PARAMETER + "(\$args);");
                     stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\",instance,parameters,new Class[]{" + signatureBuilder.toString() + "},${methodCall.method.declaringClass.name}.class);");
-                } else
+                } else {
                     stringBuilder.append("\$_=(\$r)" + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\",instance,\$args,null,${methodCall.method.declaringClass.name}.class);");
+                }
                 if (Constants.isLogging) {
                     stringBuilder.append("  android.util.Log.d(\"robust\",\"invoke  method is      ${getCoutNumber()} \" +\"" + methodCall.methodName + "\");");
                 }
             } else {
+                //静态方法中调用非静态方法，
+                // 这种场景有的，比如new 类.调用方法()或者String a="1"+"2"，但this访问不到的，所以上面的instance赋值不能用到这里，
+                //而且这里也肯定不会出现用this，所以直接用该方法的调用者实例。
                 stringBuilder.append("instance=(" + methodCall.method.declaringClass.name + ")\$0;");
-                //在static method中使用非static method
                 if (signatureBuilder.toString().length() > 1) {
                     stringBuilder.append("\$_=(\$r) " + Constants.ROBUST_UTILS_FULL_NAME + ".invokeReflectMethod(\"" + getMappingValue(getJavaMethodSignureWithReturnType(methodCall.method), memberMappingInfo) + "\",instance,\$args,new Class[]{" + signatureBuilder.toString() + "},${methodCall.method.declaringClass.name}.class);");
                 } else
@@ -356,7 +382,7 @@ class ReflectUtils {
         }
 //        }
         stringBuilder.append("}");
-//        println("getMethodCallString  " + stringBuilder.toString())
+        println("getMethodCallString  " + stringBuilder.toString())
         return stringBuilder.toString();
     }
 
@@ -370,6 +396,10 @@ class ReflectUtils {
         stringBuilder.append("\$_=(\$r)\$1;");
         stringBuilder.append("}");
         stringBuilder.append("}");
+    }
+
+    def static boolean isAddMethod(MethodCall originalMethod) {
+        return Config.newlyAddedMethodSet.contains(originalMethod.getMethod().longName)
     }
 
     def

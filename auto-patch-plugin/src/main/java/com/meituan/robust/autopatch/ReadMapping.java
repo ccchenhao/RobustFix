@@ -66,6 +66,11 @@ public class ReadMapping {
                     line = reader.readLine();
                     while (line != null) {
                         line = line.trim();
+                        //# {"id":"sourceFile","fileName":"FragmentManager.java"}
+                        if (line.endsWith("}")){
+                            line = reader.readLine();
+                            continue;
+                        }
                         if (line.endsWith(":")) {
                             needBacktrace = true;
                             break;

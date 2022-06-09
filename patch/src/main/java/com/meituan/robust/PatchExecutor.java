@@ -1,3 +1,4 @@
+
 package com.meituan.robust;
 
 import android.content.Context;
@@ -20,7 +21,7 @@ public class PatchExecutor extends Thread {
     protected RobustCallBack robustCallBack;
 
     public PatchExecutor(Context context, PatchManipulate patchManipulate, RobustCallBack robustCallBack) {
-        this.context = context.getApplicationContext();
+        this.context = context;
         this.patchManipulate = patchManipulate;
         this.robustCallBack = robustCallBack;
     }

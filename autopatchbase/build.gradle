@@ -1,4 +1,44 @@
 apply plugin: 'java'
-apply from: '../gradle_mvn_push.gradle'
-sourceCompatibility= 1.7
-targetCompatibility= 1.7
+apply plugin: 'maven-publish'
+//apply plugin: 'maven'
+
+//apply from: '../gradle_mvn_push.gradle'
+sourceCompatibility= 1.8
+targetCompatibility= 1.8
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'test.com.meituan.robust'
+            artifactId = 'autopatchbase'
+            version = '1.0.0'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            url = uri('../repo')
+        }
+    }
+}
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            //指定 maven 发布三剑客
+//            pom.groupId = 'test.com.meituan.robust'
+//            pom.artifactId = 'autopatchbase'
+//            pom.version = '1.0.0'
+//            //指定本地 maven 仓库的路径，这里我指定的就是当前 Module 目录下
+//            repository(url: uri('../repo'))
+//        }
+//    }
+//}
+
+
+
+
+
+
+
+

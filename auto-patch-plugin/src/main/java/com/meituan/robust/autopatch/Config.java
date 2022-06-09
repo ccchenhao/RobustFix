@@ -33,6 +33,7 @@ public final class Config {
     public static Set newlyAddedMethodSet = new HashSet<String>();
     public static List<String> modifiedClassNameList = new ArrayList<String>();
     public static List<String> hotfixPackageList = new ArrayList<>();
+    //methodMap是所有被插桩的方法，来自于methodsMap.robust。
     public static LinkedHashMap<String, Integer> methodMap = new LinkedHashMap<>();
     public static  String robustGenerateDirectory;
     public static Map<String, List<CtMethod>> invokeSuperMethodMap = new HashMap<>();

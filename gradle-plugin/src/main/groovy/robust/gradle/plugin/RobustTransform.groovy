@@ -59,7 +59,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
             }
             if (!isDebugTask) {
                 project.android.registerTransform(this)
-                project.afterEvaluate(new RobustApkHashAction())
+//                project.afterEvaluate(new RobustApkHashAction())
                 logger.quiet "Register robust transform successful !!!"
             }
             if (null != robust.switch.turnOnRobust && !"true".equals(String.valueOf(robust.switch.turnOnRobust))) {
@@ -67,7 +67,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
             }
         } else {
             project.android.registerTransform(this)
-            project.afterEvaluate(new RobustApkHashAction())
+//            project.afterEvaluate(new RobustApkHashAction())
         }
     }
 
@@ -141,7 +141,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
 
     @Override
     void transform(Context context, Collection<TransformInput> inputs, Collection<TransformInput> referencedInputs, TransformOutputProvider outputProvider, boolean isIncremental) throws IOException, TransformException, InterruptedException {
-        logger.quiet '================robust start================'
+        logger.quiet '================robust start1================'
         def startTime = System.currentTimeMillis()
         outputProvider.deleteAll()
         File jarFile = outputProvider.getContentLocation("main", getOutputTypes(), getScopes(),
