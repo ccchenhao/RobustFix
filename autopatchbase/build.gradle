@@ -6,20 +6,22 @@ apply plugin: 'maven-publish'
 sourceCompatibility= 1.8
 targetCompatibility= 1.8
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'test.com.meituan.robust'
-            artifactId = 'autopatchbase'
-            version = '1.0.0'
-            from components.java
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'test.com.meituan.robust'
+                artifactId = 'autopatchbase'
+                version = '1.0.0'
+                from components.java
+            }
         }
-    }
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url = uri('../repo')
-        }
+//    repositories {
+//        maven {
+//            // change to point to your repo, e.g. http://my.org/repo
+//            url = uri('../repo')
+//        }
+//    }
     }
 }
 //uploadArchives {

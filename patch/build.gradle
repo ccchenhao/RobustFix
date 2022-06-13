@@ -37,8 +37,8 @@ repositories {
 }
 dependencies {
 //    compile 'com.meituan.robust:autopatchbase:' + VERSION_NAME
-//    implementation project(':autopatchbase')
-    api 'test.com.meituan.robust:autopatchbase:1.0.0'
+    api project(':autopatchbase')
+//    api 'test.com.meituan.robust:autopatchbase:1.0.0'
 
 }
 

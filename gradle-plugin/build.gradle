@@ -14,9 +14,9 @@ dependencies {
     implementation "com.android.tools.build:gradle:3.6.4"
     implementation 'org.javassist:javassist:3.28.0-GA'
     implementation fileTree(dir: "./src/main/libs", include: ['*.jar'])
-//    compile project(':autopatchbase')
+    implementation project(':autopatchbase')
 //    compile 'com.meituan.robust:autopatchbase:0.4.93'
-    implementation 'test.com.meituan.robust:autopatchbase:1.0.0'
+//    implementation 'test.com.meituan.robust:autopatchbase:1.0.0'
     implementation 'org.ow2.asm:asm:5.0.1'
 }
 //这里因为要获取module的本地依赖，所以引入本地仓库
@@ -31,21 +31,22 @@ repositories {
     maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
 
 }
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'test.com.meituan.robust'
-            artifactId = 'gradle-plugin'
-            version = '1.0.0'
-            from components.java
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'test.com.meituan.robust'
+                artifactId = 'gradle-plugin'
+                version = '1.0.0'
+                from components.java
+            }
         }
-    }
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url = uri('../repo')
-        }
+//        repositories {
+//            maven {
+//                // change to point to your repo, e.g. http://my.org/repo
+//                url = uri('../repo')
+//            }
+//        }
     }
 }
 //uploadArchives {
