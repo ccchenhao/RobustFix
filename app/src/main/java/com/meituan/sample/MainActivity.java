@@ -110,11 +110,11 @@ public class MainActivity extends AppCompatActivity {
         return 4.6;
     }
 
-    @Add
-    public  String mainStatic(){
-        Toast.makeText(this, "mainstai1113333c", Toast.LENGTH_SHORT).show();
-        return "000000000";
-    }
+//    @Add
+//    public  String mainStatic(){
+//        Toast.makeText(this, "mainstai1113333c", Toast.LENGTH_SHORT).show();
+//        return "000000000";
+//    }
 
     private boolean isGrantSDCardReadPermission() {
         return PermissionUtils.isGrantSDCardReadPermission(this);

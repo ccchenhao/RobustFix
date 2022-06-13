@@ -32,14 +32,18 @@
                  maven { url 'https://jitpack.io' }
        }
        dependencies {
-            classpath 'com.github.ccchenhao.RobustFix:auto-patch-plugin:1.0.0'
-            classpath 'com.github.ccchenhao.RobustFix:gradle-plugin:1.0.0'
+            classpath 'com.github.chenhaomr.RobustFix:gradle-plugin:1.0.0'
+            classpath 'com.github.chenhaomr.RobustFix:auto-patch-plugin:1.0.0'
       }
    }
    ```
 3. 使用
 
-   1、拷贝：demo中的PatchManipulateImp，RobustCallBackSample和patch module到自己目录下
+   1、拷贝：demo中的PatchManipulateImp，RobustCallBackSample和patch module到自己目录下,
+   如果只拷贝patch module的所有java文件，不要忘了添加注解依赖:
+   ```java
+   api 'com.github.chenhaomr.RobustFix:autopatchbase:1.0.0'
+   ```
    将demo中app下的robust.xml配置文件和robust整个文件夹拷贝一份到自己的app目录下
 
    1.1如果想debug环境热修复，forceInsert=true

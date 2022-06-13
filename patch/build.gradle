@@ -28,16 +28,17 @@ android {
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-repositories {
-    maven{
-        //../回到根目录
-        url uri('../repo')
-    }
-
-}
+//repositories {
+//    maven{
+//        //../回到根目录
+//        url uri('../repo')
+//    }
+//
+//}
 dependencies {
 //    compile 'com.meituan.robust:autopatchbase:' + VERSION_NAME
-    api project(':autopatchbase')
+//    api project(':autopatchbase')
+    api 'com.github.chenhaomr.RobustFix:autopatchbase:1.0.0'
 //    api 'test.com.meituan.robust:autopatchbase:1.0.0'
 
 }

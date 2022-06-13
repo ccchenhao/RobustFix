@@ -1,16 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 //apply plugin: 'auto-patch-plugin'
-//apply plugin: 'robust'
+apply plugin: 'robust'
 
-gradle.taskGraph.whenReady {
-    it.allTasks.each { task ->
-        //打印的class name带Decorated,所以这里减去
-        println "找到${task.name}=>${task.class.name - '_Decorated'}"
-    }
-}
-//找到packageRelease=>com.android.build.gradle.tasks.PackageApplication
-//Could not get unknown property 'resourceFile' for task ':app:packageRelease' of type com.android.build.gradle.tasks.PackageApplication.
 android {
     compileSdkVersion 30
     defaultConfig {
